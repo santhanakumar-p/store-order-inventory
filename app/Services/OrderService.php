@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Mail\OrderConfirmation;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class OrderService
@@ -89,7 +91,11 @@ class OrderService
 
             $order->items()->createMany($lineItems);
 
-            return $order->load(['customer', 'items.product']);
+            $order->load(['customer', 'items.product']);
+
+            Mail::to($customer->email)->send(new OrderConfirmation($order));
+
+            return $order;
         });
     }
 
