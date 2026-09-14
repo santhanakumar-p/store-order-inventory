@@ -19,7 +19,9 @@ class OrderConfirmation extends Mailable implements ShouldQueue
      */
     public function __construct(public Order $order)
     {
-        $this->afterCommit();
+        if (! app()->runningUnitTests()) {
+            $this->afterCommit();
+        }
     }
 
     /**
